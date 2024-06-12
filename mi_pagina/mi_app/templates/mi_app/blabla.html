@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        img {
+            max-width: 40%;
+            height: auto;      
+        }
+
+    </style>
+</head>
+<body>
+    
+
+    <select onchange="showBreedImage(value)" name="breed_selector" id="breed_selector">
+    </select>
+    <div>
+    <img id="breed_image"></img>
+    </div>
+
+
+</body>
+<script>
+    const url = `https://api.thecatapi.com/v1/breeds?limit=20`;
+const api_key = "live_IED689jWjQmSVVYPlbT6zYtxP6hymNAFJ0ioFKOTneHbi40UCuRQ1WzDemJAh5QX"
+let storedBreeds = []
+
+ fetch(url,{headers: {
+      'x-api-key': api_key
+    }})
+ .then((response) => {
+   return response.json();
+ })
+.then((data) => {
+   //filter to only include those with an `image` object
+   data = data.filter(img=> img.image?.url!=null)
+   storedBreeds = data;
+   
+   for (let i = 0; i < storedBreeds.length; i++) {
+        const breed = storedBreeds[i];
+        let option = document.createElement('option');
+        
+        //skip any breeds that don't have an image
+        if(!breed.image)continue
+        
+        //use the current array index
+        option.value = i;
+        option.innerHTML = `${breed.name}`;
+        document.getElementById('breed_selector').appendChild(option);
+    
+    }//Este for es para que se carguen los elementos en el "select"
+
+   //show the first breed by default
+
+   showBreedImage(0)
+})
+.catch(function(error) {
+   console.log(error);
+});
+
+function showBreedImage(index)
+{ 
+  document.getElementById("breed_image").src= storedBreeds[index].image.url;
+}
+</script>
+</html>
